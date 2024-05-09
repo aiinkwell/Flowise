@@ -5,19 +5,12 @@
 # Flowise - Build LLM Apps Easily
 
 [![Release Notes](https://img.shields.io/github/release/FlowiseAI/Flowise)](https://github.com/FlowiseAI/Flowise/releases)
-[![Discord](https://img.shields.io/discord/1087698854775881778?label=Discord&logo=discord)](https://discord.gg/jbaHfsRVBW)
-[![Twitter Follow](https://img.shields.io/twitter/follow/FlowiseAI?style=social)](https://twitter.com/FlowiseAI)
-[![GitHub star chart](https://img.shields.io/github/stars/FlowiseAI/Flowise?style=social)](https://star-history.com/#FlowiseAI/Flowise)
-[![GitHub fork](https://img.shields.io/github/forks/FlowiseAI/Flowise?style=social)](https://github.com/FlowiseAI/Flowise/fork)
-
-English | [中文](./README-ZH.md) | [日本語](./README-JA.md) | [한국어](./README-KR.md)
 
 <h3>Drag & drop UI to build your customized LLM flow</h3>
 <a href="https://github.com/FlowiseAI/Flowise">
 <img width="100%" src="https://github.com/FlowiseAI/Flowise/blob/main/images/flowise.gif?raw=true"></a>
 
 ## ⚡Quick Start
-
 Download and Install [NodeJS](https://nodejs.org/en/download) >= 18.15.0
 
 1. Install Flowise
@@ -140,65 +133,49 @@ FLOWISE_PASSWORD=1234
 Flowise support different environment variables to configure your instance. You can specify the following variables in the `.env` file inside `packages/server` folder. Read [more](https://github.com/FlowiseAI/Flowise/blob/main/CONTRIBUTING.md#-env-variables)
 
 ## 📖 Documentation
-
 [Flowise Docs](https://docs.flowiseai.com/)
 
-## 🌐 Self Host
+## Self Host Instructions
+[GCP](https://docs.flowiseai.com/deployment/gcp)
+]
+## Deployment
+This project is a fork of Flowise. To release a new version:
 
-Deploy Flowise self-hosted in your existing infrastructure, we support various [deployments](https://docs.flowiseai.com/configuration/deployment)
+1. Pull the latest code
 
--   [AWS](https://docs.flowiseai.com/deployment/aws)
--   [Azure](https://docs.flowiseai.com/deployment/azure)
--   [Digital Ocean](https://docs.flowiseai.com/deployment/digital-ocean)
--   [GCP](https://docs.flowiseai.com/deployment/gcp)
--   <details>
-      <summary>Others</summary>
+2. Create a new docker image with the new version tag:
+```bash
+docker build -t gcr.io/flowise-415803/flowise:[VERSION]
+```
 
-    -   [Railway](https://docs.flowiseai.com/deployment/railway)
+3. Log into Google Cloud and authenticate with the container registry (requires permissions):
+```bash
+gcloud auth configure-docker
+```
 
-        [![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/pn4G8S?referralCode=WVNPD9)
+4. Push the image
+```bash
+docker push gcr.io/flowise-415803/[VERSION]
+```
 
-    -   [Render](https://docs.flowiseai.com/deployment/render)
+5. Update the deployment file in [yamls/deployments](./yamls/deployment.yaml)
 
-        [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://docs.flowiseai.com/deployment/render)
+6. Apply the configuration
+```bash
+kubectl apply -f deployment.yaml -n default
+```
 
-    -   [HuggingFace Spaces](https://docs.flowiseai.com/deployment/hugging-face)
+7. Monitor deployment status
+```bash
+kubectl rollout status deployment/flowise -n default
+```
 
-        <a href="https://huggingface.co/spaces/FlowiseAI/Flowise"><img src="https://huggingface.co/datasets/huggingface/badges/raw/main/open-in-hf-spaces-sm.svg" alt="HuggingFace Spaces"></a>
+## Cloud Resources
+This project has HTTPS enabled via Google's managed certifcate service. The configuration can be found in [yamls/certificate-service](./yamls/certificate-service/)
 
-    -   [Elestio](https://elest.io/open-source/flowiseai)
-
-        [![Deploy](https://pub-da36157c854648669813f3f76c526c2b.r2.dev/deploy-on-elestio-black.png)](https://elest.io/open-source/flowiseai)
-
-    -   [Sealos](https://cloud.sealos.io/?openapp=system-template%3FtemplateName%3Dflowise)
-
-        [![](https://raw.githubusercontent.com/labring-actions/templates/main/Deploy-on-Sealos.svg)](https://cloud.sealos.io/?openapp=system-template%3FtemplateName%3Dflowise)
-
-    -   [RepoCloud](https://repocloud.io/details/?app_id=29)
-
-        [![Deploy on RepoCloud](https://d16t0pc4846x52.cloudfront.net/deploy.png)](https://repocloud.io/details/?app_id=29)
-
-      </details>
-
-## 💻 Cloud Hosted
-
-Coming soon
-
-## 🙋 Support
-
-Feel free to ask any questions, raise problems, and request new features in [discussion](https://github.com/FlowiseAI/Flowise/discussions)
-
-## 🙌 Contributing
-
-Thanks go to these awesome contributors
-
-<a href="https://github.com/FlowiseAI/Flowise/graphs/contributors">
-<img src="https://contrib.rocks/image?repo=FlowiseAI/Flowise" />
-</a>
-
-See [contributing guide](CONTRIBUTING.md). Reach out to us at [Discord](https://discord.gg/jbaHfsRVBW) if you have any questions or issues.
-[![Star History Chart](https://api.star-history.com/svg?repos=FlowiseAI/Flowise&type=Timeline)](https://star-history.com/#FlowiseAI/Flowise&Date)
-
-## 📄 License
-
-Source code in this repository is made available under the [Apache License Version 2.0](LICENSE.md).
+| Project reference      | Value                                                          |
+|------------------------|--------------------------------------------------------------  |
+| GCP Project Location   | `aiinkwell.com > Inkwell Organization > dev`                   |
+| GCP Project ID         | `flowise-415803`                                           |
+| GCP Project Link       | [Cloud Console Link](https://console.cloud.google.com/welcome?project=flowise-415803) |
+| Service URL            | https://flowise.aiinkwell.dev |
